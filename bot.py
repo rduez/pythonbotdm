@@ -16,8 +16,11 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 
 @bot.event
 async def on_ready():
-    await bot.tree.sync()
-    print(f"✅ Connecté en tant que {bot.user} (slash commands activées)")
+    try:
+        synced = await bot.tree.sync()
+        print(f"✅ Connecté en tant que {bot.user} | {len(synced)} commandes slash synchronisées")
+    except Exception as e:
+        print(f"⚠️ Erreur lors de la sync : {e}")
 
 # Slash command /dm avec mentions multiples
 @bot.tree.command(name="dm", description="Envoyer un message privé à plusieurs utilisateurs")
