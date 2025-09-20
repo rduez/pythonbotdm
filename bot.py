@@ -8,6 +8,11 @@ from dotenv import load_dotenv
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 
+# Vérifier que le token est défini
+if not TOKEN:
+    print("❌ ERREUR : Token Discord non trouvé. Veuillez configurer DISCORD_TOKEN dans les secrets Replit.")
+    exit(1)
+
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
@@ -16,11 +21,19 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 
 @bot.event
 async def on_ready():
+    print(f"✅ Connecté en tant que {bot.user}")
     try:
         synced = await bot.tree.sync()
-        print(f"✅ Connecté en tant que {bot.user} | {len(synced)} commandes slash synchronisées")
+        print(f"📝 {len(synced)} commandes slash synchronisées avec succès")
+    except discord.HTTPException as e:
+        if e.code == 50240:
+            print("⚠️ Note: Une commande Entry Point existe déjà. Le bot fonctionne normalement.")
+        else:
+            print(f"⚠️ Erreur HTTP lors de la synchronisation: {e}")
     except Exception as e:
-        print(f"⚠️ Erreur lors de la sync : {e}")
+        print(f"⚠️ Erreur lors de la synchronisation des commandes: {e}")
+    
+    print("🤖 Bot prêt à recevoir les commandes!")
 
 # Slash command /dm avec mentions multiples
 @bot.tree.command(name="dm", description="Envoyer un message privé à plusieurs utilisateurs")
@@ -52,3 +65,4 @@ async def dm(interaction: discord.Interaction, mentions: str, message: str):
     await interaction.followup.send(response or "❌ Aucun utilisateur trouvé.", ephemeral=True)
 
 bot.run(TOKEN)
+
