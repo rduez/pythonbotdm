@@ -22,6 +22,13 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 @bot.event
 async def on_ready():
     print(f"✅ Connecté en tant que {bot.user}")
+    
+    # Changer le statut / description du bot
+    await bot.change_presence(activity=discord.Activity(
+        type=discord.ActivityType.listening,  # Tu peux mettre playing, listening, watching, competing
+        name="GigaChad Remix"               # Ici le texte que tu veux afficher
+    ))
+    
     try:
         synced = await bot.tree.sync()
         print(f"📝 {len(synced)} commandes slash synchronisées avec succès")
@@ -65,4 +72,3 @@ async def dm(interaction: discord.Interaction, mentions: str, message: str):
     await interaction.followup.send(response or "❌ Aucun utilisateur trouvé.", ephemeral=True)
 
 bot.run(TOKEN)
-
