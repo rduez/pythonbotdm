@@ -57,7 +57,7 @@ async def dm(interaction: discord.Interaction, mentions: str, message: str):
             try:
                 user_id = int(mention.replace("<@", "").replace(">", "").replace("!", ""))
                 user = await bot.fetch_user(user_id)
-                message = f"[{user.name}#{user.discriminator} | ID:{user.id}]\n{message}"
+                message = f"[De {interaction.user.name}#{interaction.user.discriminator} | ID:{interaction.user.id}]\n{message}"
                 await user.send(message)
                 success.append(user.name)
             except Exception:
